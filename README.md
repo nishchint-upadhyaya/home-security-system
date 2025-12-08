@@ -28,7 +28,10 @@ Edge Impulse keyword detection model for a personal home security system using A
 - Open VS Code terminal into "/FINAL_Deployment/nano_ble33_sense_microphone_V2" folder
 - Create a .env within this folder with "UBIDOTS_TOKEN" set to your token value
 - Connect Arduino through USB
-- Activate venv: "source home-security-ubidots/bin/activate"
+- Create vnenv: python3 -m venv "home-security-ubidots"
+- Activate venv: source home-security-ubidots/bin/activate
+- Install required libraries within venv:
+    - python3 -m pip install pyserial paho-mqtt python-dotenv
 - Run "python3 MqttUbidots.py" through the Terminal
 - Say the keyword for the Arduino to detect
 - Once the keyword has been detected, the terminal will notify that a payload is being sent to Ubidots
