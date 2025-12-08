@@ -1,0 +1,7 @@
+Hard Negative values, i.e. partially saying the "recludo" keyword.
+
+These hard negative sounds include:
+- reclu
+- cludo 
+- ludo
+- udo
