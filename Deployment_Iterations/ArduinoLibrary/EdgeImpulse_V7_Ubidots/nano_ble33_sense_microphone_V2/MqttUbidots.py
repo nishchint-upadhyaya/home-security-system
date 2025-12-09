@@ -30,6 +30,7 @@ mqtt_client.on_connect = on_connect
 mqtt_client.connect(MQTT_BROKER, MQTT_PORT, 60)
 mqtt_client.loop_start()
 
+# Line below opens a serial port - equivalent to opening Serial Monitor in Arduino IDE
 ser = serial.Serial(SERIAL_PORT, BAUD_RATE, timeout=1)
 print("Listening for serial messages...")
 
@@ -50,5 +51,3 @@ while True:
         
         time.sleep(2)
         break
-    
-    # time.sleep(0.1)

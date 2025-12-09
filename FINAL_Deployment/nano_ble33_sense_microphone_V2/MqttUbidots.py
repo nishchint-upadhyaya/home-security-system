@@ -38,12 +38,26 @@ while True:
     line = ser.readline().decode("utf-8").strip()
     if "recludo_detected" in line:
         print("Keyword detected. Sending to Ubidots...")
-        # payload = { VARIABLE_LABEL: 1 }
         payload = {
             VARIABLE_LABEL: {
-                # "value": 1,
-                "value": int(time.time()),  # send UNIX timestamp instead of same value over and over
+                "value": 1,
+                # "value": int(time.time()),  # send UNIX timestamp instead of same value over and over - time.time() gives the number of seconds since Jan 1, 1970 UTC
                 "context": { "status": "success" }
+            }
+        }
+        mqtt_client.publish(MQTT_TOPIC, json.dumps(payload))
+        print("Data sent to Ubidots!")
+        
+        time.sleep(2)
+        break
+
+    elif "recludo_not_detected" in line:
+        print("Keyword not detected in time window. Sending to Ubidots...")
+        payload = {
+            VARIABLE_LABEL: {
+                "value": 0,
+                # "value": int(time.time()),  # send UNIX timestamp instead of same value over and over - time.time() gives the number of seconds since Jan 1, 1970 UTC
+                "context": { "status": "failed" }
             }
         }
         mqtt_client.publish(MQTT_TOPIC, json.dumps(payload))

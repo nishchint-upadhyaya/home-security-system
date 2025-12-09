@@ -92,11 +92,17 @@ void setup()
  */
 void loop()
 {
-    ei_printf("Listening for keyword...\n");
+    ei_printf("Listening for keyword for 5 seconds...\n");
 
-    while (true) {
+    unsigned long startTime = millis();
+    const unsigned long detectionWindow = 5000; // 5 seconds
+    const float CONFIDENCE_THRESHOLD = 0.60;
+    bool detected = false;
+
+    while (millis() - startTime < detectionWindow) {
         ei_printf("Recording...\n");
-        analogWrite(LEDR, 128); // RED LED ON
+        digitalWrite(LEDR, LOW); // RED LED ON
+        digitalWrite(LEDB, LOW); // BLUE LED ON
 
         bool m = microphone_inference_record();
         if (!m) {
@@ -104,7 +110,8 @@ void loop()
             continue;
         }
 
-        analogWrite(LEDR, 255); // RED LED OFF
+        digitalWrite(LEDR, HIGH); // RED LED OFF
+        digitalWrite(LEDB, HIGH); // BLUE LED OFF
         ei_printf("Recording done\n");
 
         signal_t signal;
@@ -118,50 +125,41 @@ void loop()
             continue;
         }
 
-        // Print predictions
-        ei_printf("Predictions ");
-        ei_printf("(DSP: %d ms., Classification: %d ms., Anomaly: %d ms.)",
-            result.timing.dsp, result.timing.classification, result.timing.anomaly);
-        ei_printf(": \n");
-
-        for (size_t ix = 0; ix < EI_CLASSIFIER_LABEL_COUNT; ix++) {
-            ei_printf("    %s: %.5f\n", result.classification[ix].label, result.classification[ix].value);
-        }
-
-        // Check if the top prediction is "recludo" with a high enough confidence
-        const float CONFIDENCE_THRESHOLD = 0.60;  // adjust as needed
         for (size_t ix = 0; ix < EI_CLASSIFIER_LABEL_COUNT; ix++) {
             if (strcmp(result.classification[ix].label, "recludo") == 0 &&
                 result.classification[ix].value >= CONFIDENCE_THRESHOLD) {
-
-                // ei_printf("✅ Keyword 'recludo' detected with confidence %.2f! Going to sleep...\n", result.classification[ix].value);
-                Serial.println("recludo_detected");
-                
-                delay(100); // small delay to finish print
-                
-                // digitalWrite(LEDR, HIGH); // Turn OFF Red LED before sleeping
-                // analogWrite(LEDR, 255); // RED LED OFF
-
-                // Blink Blue LED three times before sleep - a way to notify user that the correct keyword was said
-                for (int i = 0; i < 3; i++) {
-                    digitalWrite(LEDB, LOW);   // LED ON (active-low)
-                    delay(500);                // ON duration
-                    digitalWrite(LEDB, HIGH);  // LED OFF
-                    delay(500);                // OFF duration
-                }
-
-                // Uncomment the lines below if the system needs to go to sleep after word is detected
-
-                delay(3000); // Wait a bit before sleeping machine so payload can be sent to Ubidot
-
-                digitalWrite(LEDG, LOW);  // Turn OFF Green LED to signify system is off - unique case where LOW=off for Green LED since it is shared with power indicator
-
-                // DEEP SLEEP: requires external wake trigger like button, GPIO, etc.                
-                NRF_POWER->SYSTEMOFF = 1;
-                while (1); // fallback: halt if SYSTEMOFF fails
+                detected = true;
+                break;
             }
         }
+
+        if (detected) break;
     }
+
+    if (detected) {
+        Serial.println("recludo_detected");
+
+        for (int i = 0; i < 3; i++) {
+            digitalWrite(LEDB, LOW);
+            delay(500);
+            digitalWrite(LEDB, HIGH);
+            delay(500);
+        }
+    } else {
+        Serial.println("recludo_not_detected");
+
+        for (int i = 0; i < 3; i++) {
+            digitalWrite(LEDR, LOW);
+            delay(500);
+            digitalWrite(LEDR, HIGH);
+            delay(500);
+        }
+    }
+
+    delay(3000);
+    digitalWrite(LEDG, LOW);
+    NRF_POWER->SYSTEMOFF = 1;
+    while (1); // fallback
 }
 
 /**
