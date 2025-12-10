@@ -125,9 +125,23 @@ void loop()
             continue;
         }
 
+        // Print predictions
+        ei_printf("Predictions ");
+        ei_printf("(DSP: %d ms., Classification: %d ms., Anomaly: %d ms.)",
+            result.timing.dsp, result.timing.classification, result.timing.anomaly);
+        ei_printf(": \n");
+
+        for (size_t ix = 0; ix < EI_CLASSIFIER_LABEL_COUNT; ix++) {
+            ei_printf("    %s: %.5f\n", result.classification[ix].label, result.classification[ix].value);
+        }
+
         for (size_t ix = 0; ix < EI_CLASSIFIER_LABEL_COUNT; ix++) {
             if (strcmp(result.classification[ix].label, "recludo") == 0 &&
                 result.classification[ix].value >= CONFIDENCE_THRESHOLD) {
+
+                float confidence = result.classification[ix].value;
+                ei_printf("✅ Keyword 'recludo' detected with confidence %.2f!\n", confidence);
+                
                 detected = true;
                 break;
             }

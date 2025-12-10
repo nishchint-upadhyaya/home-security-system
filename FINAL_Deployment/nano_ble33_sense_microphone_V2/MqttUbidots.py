@@ -52,7 +52,7 @@ while True:
         break
 
     elif "recludo_not_detected" in line:
-        print("Keyword not detected in time window. Sending to Ubidots...")
+        print("Keyword not detected within time window. Sending to Ubidots...")
         payload = {
             VARIABLE_LABEL: {
                 "value": 0,
