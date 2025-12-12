@@ -12,12 +12,12 @@ UBIDOTS_TOKEN = os.getenv("UBIDOTS_TOKEN")
 DEVICE_LABEL = "home-security"
 VARIABLE_LABEL = "recludo_trigger"
 
-MQTT_BROKER = "industrial.api.ubidots.com"
+MQTT_BROKER = "industrial.api.ubidots.com" # Cloud MQTT broker hosted by Ubidots
 MQTT_PORT = 1883
-MQTT_TOPIC = f"/v1.6/devices/{DEVICE_LABEL}"
+MQTT_TOPIC = f"/v1.6/devices/{DEVICE_LABEL}" # Ubidots topic
 
 # Serial config
-SERIAL_PORT = "/dev/cu.usbmodem101"
+SERIAL_PORT = "/dev/cu.usbmodem2101"
 BAUD_RATE = 115200
 
 def on_connect(client, userdata, flags, rc):

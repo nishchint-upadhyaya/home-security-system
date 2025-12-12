@@ -1,5 +1,13 @@
-# home-security-system
+# IoT Device for Home Security System
 Edge Impulse keyword detection model for a personal home security system using Arduino Nano BLE 33.
+
+### Repo Folder Structure:
+#### (First two bullets are key)
+- <b>FINAL_Deployment:</b> Contains the <b><u>final</u></b> EdgeImpulse model, Arduino Code and python script to publish to Ubidots through Mqtt <b><i>(everything presented in class)</i></b>
+- <b>UpadhyayaN-Presentation.pptx:</b> Final PowerPoint Presentation shown in class (which also contains the architecture diagram)
+- <b>README.md (which you are currently reading):</b> Contains detailed info about project, setup and running the model
+- <b>Data:</b> Contains voice recordings used to train model
+- <b>Deployment_Iterations:</b> Contains different versions of model built on Edge Impulse, i.e. I built and saved a new version of the model each time I re-trained it on Edge Impulse
 
 ### The Model
 - Trained on EdgeImpulse to detect the keyword "recludo"
@@ -36,6 +44,7 @@ Edge Impulse keyword detection model for a personal home security system using A
 - Activate venv: source home-security-ubidots/bin/activate
 - Install required libraries within venv:
     - python3 -m pip install pyserial paho-mqtt python-dotenv
+- Edit the <b><i>SERIAL_PORT = "/dev/cu.usbmodem101"</i></b> in the "MqttUbidots.py" to point to the appropriate serial port on your machine
 - Run "python3 MqttUbidots.py" through the Terminal
 - Use the Arduino Model:
     - If the keyword has been detected within 5 seconds of system start (while light is blinking purple), a "success" payload is prepared
